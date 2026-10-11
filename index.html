@@ -236,7 +236,7 @@ h1.glitch{animation:glitch 7s 2s infinite}
 .hold.holding{animation:shake .12s infinite}
 .hold small{display:block;font-weight:400;font-size:10px;color:var(--khaki);margin-top:4px;letter-spacing:.1em}
 #no{margin-top:16px;padding:10px;font-size:11px;color:var(--dim);text-decoration:underline}
-#no:disabled{text-decoration:line-through;cursor:default}
+#no:disabled{text-decoration:none;cursor:default}
 #no.shake{animation:shake .1s 5}
 #nomsg{min-height:1.7em;font-size:11px;color:var(--or);letter-spacing:.1em;text-transform:uppercase}
 #accepted{display:none}
@@ -480,6 +480,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
 document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -602,7 +603,7 @@ function setAgent(n){agent=n;$$('[data-agent]').forEach(e=>e.textContent=n);
 
 function boot(){
   const saved=store.get('agent');
-  if(saved){setAgent(saved);if(store.get('accepted'))document.body.classList.add('accepted');return startMain()}
+  if(saved){setAgent(saved);const r=store.get('rsvp');if(r==='aceitou')document.body.classList.add('accepted');if(r==='recusou')lockNo();sync();return startMain()}
   document.body.classList.add('locked');show('boot');
 }
 async function bootLog(withSound){
@@ -726,10 +727,19 @@ $('#mapGo').onclick=async()=>{
 };
 
 // ---- confirmação ----
-const NO=['PEDIDO NEGADO.','Deserção não é uma opção, soldado.','Tentativa registrada na sua ficha.'];let ni=0;
-$('#no').onclick=e=>{
-  const b=e.currentTarget;$('#nomsg').textContent=NO[ni];re(b,'shake');sfx.denied();buzz(60);
-  if(++ni>=NO.length){b.disabled=true;b.textContent='opção removida pelo comando'}
+// registro na planilha (config.js): uma resposta por aparelho; o servidor ignora repetições
+const dev=store.get('dev')||(()=>{const d=crypto.randomUUID();store.set('dev',d);return d})();
+function rsvp(status){store.set('rsvp',status);store.set('sent','');sync()}
+function sync(){ // reenvia na próxima visita se o envio falhou
+  const s=store.get('rsvp');if(!window.API||!s||store.get('sent')===s)return;
+  fetch(API,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify({id:dev,name:agent,status:s})}).then(()=>store.set('sent',s)).catch(()=>{});
+}
+const noBtn=$('#no'),noMsg=$('#nomsg');let sure=false;
+function lockNo(){noBtn.disabled=true;noBtn.textContent='recusa registrada';noMsg.textContent='O comando foi notificado. Mudou de ideia? Segure o botão acima.'}
+noBtn.onclick=()=>{
+  re(noBtn,'shake');sfx.denied();buzz(60);
+  if(!sure){sure=true;noMsg.textContent='Tem certeza, soldado? Toque de novo para confirmar.';return}
+  rsvp('recusou');lockNo();
 };
 hold($('#accept'),1400,finale);
 
@@ -749,7 +759,7 @@ function countdown(sec,S,M){return new Promise(res=>{
 
 async function finale(){ // efeito puramente visual: nada é apagado
   const F=$('#finale'),M=$('#main'),S=$('.st2'),w=reduce?.2:1,stage=s=>F.className='screen on '+s;
-  store.set('accepted','1');document.body.classList.add('locked');
+  rsvp('aceitou');document.body.classList.add('locked');
   // 1 · aceite
   stage('s1');sfx.stamp();buzz([40,40,140]);
   await sleep(1100*w);await type($('#reg'),'> ACEITE REGISTRADO NESTE TERMINAL');sfx.granted();await sleep(1500*w);
