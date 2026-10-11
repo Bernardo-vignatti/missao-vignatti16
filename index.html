@@ -19,7 +19,7 @@
   --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{background:var(--bg);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--khaki);font:400 14px/1.65 var(--mono);overflow-x:hidden;
   background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:28px 28px}
 body.locked{overflow:hidden}
@@ -45,7 +45,7 @@ b{color:var(--cream)}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}}
 
 /* ---------- telas de entrada ---------- */
-.screen{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;background:var(--bg);text-align:center}
+.screen{--sb:var(--bg);box-shadow:0 0 0 220px var(--sb);position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;background:var(--bg);text-align:center}
 .screen.on{display:flex}
 .screen h2{font:900 clamp(36px,11.5vw,62px)/.9 var(--disp);color:var(--cream);margin:12px 0 26px}
 #start{display:flex;flex-direction:column;align-items:center;width:min(320px,100%)}
@@ -85,10 +85,11 @@ b{color:var(--cream)}
 .folder .stamp{font-size:20px;padding:6px 14px;border-width:3px;opacity:0}
 #dossier.on .folder .stamp{animation:slam .4s .5s cubic-bezier(.2,1.6,.4,1) both}
 #dossier.open .folder{transition:transform .9s cubic-bezier(.6,0,.3,1),opacity .9s;transform:rotateX(-96deg);opacity:0}
-#dossier.open{transition:background .9s;background:transparent;pointer-events:none}
+#dossier.open{transition:background .9s;background:transparent;box-shadow:none;pointer-events:none}
 
 /* ---------- barra superior ---------- */
 #top{position:fixed;top:0;left:0;right:0;z-index:40;height:34px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;background:rgba(21,23,15,.92);border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(4px)}
+#top::before{content:'';position:absolute;left:0;right:0;bottom:100%;height:140px;background:var(--bg)}
 #top button{padding:8px 0 8px 12px;font-size:10px;letter-spacing:.12em;color:var(--khaki);text-transform:uppercase}
 #top button[aria-pressed=false]{color:var(--dim)}
 #pct{color:var(--or);font-weight:700}
@@ -247,12 +248,10 @@ footer{text-align:center;padding:40px 20px 60px;font-size:10px;letter-spacing:.1
 footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-spacing:.16em;padding:10px;text-transform:uppercase}
 
 /* ---------- sequência final ---------- */
-#finale{z-index:60;background:rgba(8,8,5,.92);overflow:hidden;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+#finale{--sb:rgba(8,8,5,.92);z-index:60;background:rgba(8,8,5,.92);overflow:hidden;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 .st{display:none;position:relative}
 #finale.s1 .st1,#finale.s2 .st2,#finale.s4 .st4,#finale.s5 .st5{display:block}
 /* 1 · aceite */
-#finale.s1{animation:hit .5s}
-@keyframes hit{0%{background:var(--or)}}
 .bigstamp{position:relative;font:900 clamp(56px,18vw,120px)/.85 var(--disp);color:var(--or);border:6px solid var(--or);padding:16px 20px 12px;transform:rotate(-5deg);animation:slam .45s cubic-bezier(.2,1.6,.4,1) both}
 .st1 p{margin-top:30px;letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--cream)}
 .st1 .term{margin-top:14px;color:var(--green);letter-spacing:.08em}
@@ -260,7 +259,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
 @keyframes shock{0%{opacity:1}100%{transform:scale(55);opacity:0}}
 /* 2 · alerta + contagem */
 #finale.s2{background:rgba(34,3,1,.86);animation:alarm 1s ease-in-out infinite}
-@keyframes alarm{0%,100%{box-shadow:inset 0 0 70px rgba(255,45,26,.25)}50%{box-shadow:inset 0 0 150px rgba(255,45,26,.7)}}
+@keyframes alarm{0%,100%{box-shadow:inset 0 0 70px rgba(255,45,26,.25),0 0 0 220px #1c0201}50%{box-shadow:inset 0 0 150px rgba(255,45,26,.7),0 0 0 220px #1c0201}}
 #finale.s2::before,#finale.s2::after{content:'';position:absolute;left:0;right:0;top:0;height:16px;background:repeating-linear-gradient(-45deg,var(--or) 0 14px,#000 14px 28px);animation:stripes .7s linear infinite}
 #finale.s2::after{top:auto;bottom:0;animation-direction:reverse}
 @keyframes stripes{to{background-position:39.6px 0}}
@@ -278,9 +277,9 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
 @keyframes tick{0%{transform:scale(1.7);opacity:.2;filter:blur(6px);text-shadow:8px 0 #0ff,-8px 0 #f0f}}
 #ms{margin-top:18px;font:700 20px var(--mono);color:var(--cream);letter-spacing:.12em;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s}
 /* 3 · detonação: clarão, onda de choque e tela de tubo desligando */
-#finale.s3,#finale.s4{background:#000}
+#finale.s3,#finale.s4{--sb:#000;background:#000}
 .crt,.boom{display:none}
-#finale.s3 .crt{display:block;position:absolute;inset:0;background:#fff;animation:crt 1.7s cubic-bezier(.7,0,.3,1) forwards}
+#finale.s3 .crt{display:block;position:absolute;inset:28px 0;background:#fff;animation:crt 1.7s cubic-bezier(.7,0,.3,1) forwards}
 @keyframes crt{0%{background:#fff}22%{background:#ff8a3c;transform:none}32%{background:#fff}60%{transform:scaleY(.004)}85%{transform:scaleY(.004) scaleX(.012)}100%{transform:scale(0)}}
 #finale.s3 .boom{display:block;border-color:#000;border-width:4px;animation:shock .7s ease-out forwards}
 .ember{position:absolute;left:50%;top:50%;width:5px;height:5px;background:#ffb347;box-shadow:0 0 8px #ff5a1f;animation:ember 1.5s ease-out forwards}
@@ -290,7 +289,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
 .st4 .term{font-size:13px;line-height:2}
 .st4 .term::after{content:'█';animation:blink 1s steps(1) infinite}
 /* 5 · resumo */
-#finale.s5{background:var(--bg);justify-content:flex-start;overflow-y:auto;padding-top:46px}
+#finale.s5{--sb:var(--bg);background:var(--bg);justify-content:flex-start;overflow-y:auto;padding-top:46px}
 .st5{width:min(420px,100%);text-align:left;z-index:1}
 #finale.s5 .st5>*{animation:rise .6s both}
 #finale.s5 .st5>:nth-child(2){animation-delay:.15s}#finale.s5 .st5>:nth-child(3){animation-delay:.3s}
@@ -499,6 +498,8 @@ const sfx=(()=>{
   const live=()=>on&&ac&&ac.state==='running';
   function unlock(){ // só pode nascer dentro de um toque do usuário
     if(!on)return;
+    try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch{}
+    ios||=Object.assign(new Audio(silentWav()),{loop:true});ios.setAttribute('playsinline','');ios.play().catch(()=>{});
     if(!ac){
       ac=new (window.AudioContext||window.webkitAudioContext)();
       out=ac.createGain();out.gain.value=.55;
@@ -512,8 +513,6 @@ const sfx=(()=>{
       [55,55.6,82.4].forEach(hz=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=hz;o.connect(f);o.start()});
     }
     ac.resume();hum.gain.setTargetAtTime(.05,ac.currentTime,1.5);
-    if(navigator.audioSession)navigator.audioSession.type='playback';
-    else{ios||=Object.assign(new Audio(silentWav()),{loop:true});ios.play().catch(()=>{})}
   }
   function silentWav(){ // 0,1 s de silêncio em WAV
     const n=4410,b=new DataView(new ArrayBuffer(44+n)),w=(o,t)=>[...t].forEach((c,i)=>b.setUint8(o+i,c.charCodeAt(0)));
