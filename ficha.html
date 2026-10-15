@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
 <link rel="icon" href="logo.png">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='8';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='9';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,15 +51,33 @@ button:disabled{opacity:.5;cursor:wait}
 .note{font-size:11px;color:var(--dim);margin-top:12px}
 #done b{font:900 34px/1 var(--disp);color:var(--green);display:block;margin-bottom:8px}
 #done button{margin-top:16px;background:none;color:var(--or)}
+/* cena de abertura: parabéns pela missão aceita (some sozinha ou com um toque) */
+#hey{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:var(--bg);text-align:center;padding:24px;cursor:pointer;animation:out .5s 3.2s forwards}
+#hey .st{font:900 clamp(52px,17vw,96px)/.85 var(--disp);color:var(--or);border:6px solid var(--or);padding:14px 18px 10px;transform:rotate(-5deg);animation:slam .45s .2s cubic-bezier(.2,1.6,.4,1) both}
+#hey p{color:var(--cream);letter-spacing:.18em;text-transform:uppercase;font-size:12px;animation:up .5s .9s both}
+#hey p b{display:block;font:900 30px/1.1 var(--disp);color:var(--green);letter-spacing:.04em;margin-top:6px}
+#hey i{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:var(--c,var(--or));left:var(--x);top:var(--y);animation:pop .4s var(--d) both}
+@keyframes slam{from{transform:scale(3) rotate(-5deg);opacity:0}to{transform:scale(1) rotate(-5deg);opacity:1}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+@keyframes pop{from{transform:scale(0)}60%{transform:scale(1.2)}}
+@keyframes out{to{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){#hey{display:none}}
 footer{text-align:center;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);padding:0 16px 40px}
 footer a{color:var(--or)}
 </style>
 </head>
 <body>
+<div id="hey" aria-hidden="true">
+  <i style="--s:60px;--x:8%;--y:14%;--d:.55s"></i><i style="--s:24px;--x:80%;--y:10%;--d:.65s;--c:var(--green)"></i>
+  <i style="--s:42px;--x:78%;--y:76%;--d:.75s"></i><i style="--s:18px;--x:14%;--y:82%;--d:.6s;--c:var(--cream)"></i>
+  <i style="--s:14px;--x:60%;--y:20%;--d:.8s;--c:var(--cream)"></i><i style="--s:30px;--x:24%;--y:66%;--d:.7s;--c:var(--green)"></i>
+  <div class="st">MISSÃO<br>ACEITA</div>
+  <p>Parabéns, agente<b>BEM-VINDO À EQUIPE</b></p>
+</div>
 <main>
   <span class="tag">Classificado // ficha do agente</span>
   <h1>MISSÃO<br><em>VIGNATTI 16</em></h1>
-  <p class="lead">Tudo o que você precisa saber, direto ao ponto. No fim da página, preencha sua identificação.</p>
+  <p class="lead">Você aceitou a missão. Aqui está tudo o que precisa saber, direto ao ponto. No fim da página, preencha sua identificação.</p>
 
   <div class="grid">
     <div class="box"><span class="tag">Data</span><b>17/10 · SÁBADO</b></div>
@@ -106,9 +124,10 @@ footer a{color:var(--or)}
   </div>
 </main>
 <footer><a href="./">Abrir a transmissão completa</a></footer>
-<script src="config.js?v=8"></script>
+<script src="config.js?v=9"></script>
 <script>
 const $=s=>document.querySelector(s);
+$('#hey').onclick=()=>$('#hey').remove();setTimeout(()=>$('#hey')?.remove(),3800);
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 // CPF com 11 dígitos precisa passar nos dígitos verificadores; RG é livre (6 a 14 caracteres)
 function docOk(v){
