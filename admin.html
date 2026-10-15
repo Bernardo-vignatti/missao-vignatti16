@@ -6,7 +6,7 @@
 <title>Comando // Missão Vignatti 16</title>
 <meta name="robots" content="noindex">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='7';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='8';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,17 +52,19 @@ li small{flex:none;font-weight:400;color:var(--dim);font-size:11px}
     <div class="stats">
       <div class="ok"><b id="nA">0</b>aceitaram</div>
       <div class="no"><b id="nR">0</b>recusaram</div>
-      <div><b id="nP">14</b>sem resposta</div>
+      <div><b id="nP">16</b>sem resposta</div>
     </div>
     <h2>ACEITARAM <span id="cA"></span></h2><ul id="lA"></ul>
     <h2>RECUSARAM <span id="cR"></span></h2><ul id="lR"></ul>
+    <h2>FICHAS <span id="cF"></span></h2><ul id="lF"></ul>
+    <p class="tag">CPF/RG ficam só na aba "Fichas" da planilha</p>
     <p class="tag" id="upd"></p>
     <button id="refresh">Atualizar</button>
   </div>
 </main>
-<script src="config.js?v=7"></script>
+<script src="config.js?v=8"></script>
 <script>
-const $=s=>document.querySelector(s),TOTAL=14; // 14 convocados
+const $=s=>document.querySelector(s),TOTAL=16; // 16 convocados
 let senha='';
 async function load(){
   if(!window.API){$('#msg').textContent='Registro ainda não configurado (config.js sem endereço).';return false}
@@ -76,7 +78,7 @@ async function load(){
     li.append(t);return li}));
     if(!rows.length){const p=document.createElement('p');p.className='empty';p.textContent='Ninguém ainda.';ul.append(p)}};
   const a=d.lista.filter(r=>r.status==='aceitou'),r=d.lista.filter(x=>x.status==='recusou');
-  fill($('#lA'),a);fill($('#lR'),r);
+  fill($('#lA'),a);fill($('#lR'),r);fill($('#lF'),d.fichas||[]);$('#cF').textContent=(d.fichas||[]).length;
   $('#nA').textContent=$('#cA').textContent=a.length;$('#nR').textContent=$('#cR').textContent=r.length;
   $('#nP').textContent=Math.max(0,TOTAL-a.length-r.length);
   $('#upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');

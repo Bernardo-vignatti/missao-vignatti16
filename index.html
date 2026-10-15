@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#15170f">
 <meta name="robots" content="noindex">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='7';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='8';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -368,7 +368,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
   <section class="hero">
     <div class="row"><span class="tag">Agente: <b data-agent></b></span><span class="stamp">Convocação</span></div>
     <h1 id="title"><span data-decrypt>MISSÃO</span><em data-decrypt>VIGNATTI 16</em></h1>
-    <p id="brief">Soldado, você foi selecionado entre 14 convocados para a operação de aniversário de 16 anos. Objetivo: uma batalha de paintball em 3 campos. Missão aceita?</p>
+    <p id="brief">Soldado, você foi selecionado entre 16 convocados para a operação de aniversário de 16 anos. Objetivo: uma batalha de paintball em 3 campos. Missão aceita?</p>
     <div class="cards rv">
       <div class="card date"><span class="tag">Data</span><b>17/10 · SÁBADO</b></div>
       <div class="card"><span class="tag">Zona de combate</span><b>NelBosque Paintball · Farroupilha/RS</b></div>
@@ -447,6 +447,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
       <div id="accepted">
         <span class="stamp">Missão aceita</span>
         <button class="btn" id="showSummary">Ver resumo da missão</button>
+        <a class="btn" href="ficha.html" style="margin-top:10px">Preencher ficha de identificação</a>
       </div>
     </div>
   </section>
@@ -486,7 +487,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
   </div>
 </div>
 
-<script src="config.js?v=7"></script>
+<script src="config.js?v=8"></script>
 <script>
 document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -638,7 +639,7 @@ nameInput.addEventListener('keydown',e=>{if(e.key==='Enter')nameInput.blur()});
 hold($('#scanner'),1600,async()=>{
   setAgent(nameInput.value.trim().toUpperCase());store.set('agent',agent);
   const st=$('#identStatus');st.className='ok';buzz([30,40,30]);sfx.granted();
-  st.textContent='';st.dataset.t=`ACESSO LIBERADO · AGENTE ${agent} · 1 ENTRE 14 CONVOCADOS`;
+  st.textContent='';st.dataset.t=`ACESSO LIBERADO · AGENTE ${agent} · 1 ENTRE 16 CONVOCADOS`;
   await scramble(st,1100);await sleep(1100);show('dossier');setTimeout(sfx.stamp,reduce?0:650);
 },()=>{
   if(nameInput.value.trim())return true;
