@@ -6,7 +6,7 @@
 <title>Comando // Missão Vignatti 16</title>
 <meta name="robots" content="noindex">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='10';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='11';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,9 +27,11 @@ button{font:inherit;cursor:pointer;display:block;width:100%;padding:15px;border:
 button:hover{background:var(--or);color:var(--bg)}
 :focus-visible{outline:2px solid var(--or);outline-offset:3px}
 #msg{min-height:1.6em;margin-top:12px;color:var(--or);font-size:12px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stats div{background:var(--panel);border:1px solid var(--line);padding:12px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
-.stats b{display:block;font:900 40px/1 var(--disp);color:var(--cream)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.stats div{background:var(--panel);border:1px solid var(--line);padding:10px 8px;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.stats b{display:block;font:900 34px/1 var(--disp);color:var(--cream)}
+.stats .fi b{color:var(--khaki)}
+li span{display:block}li em{display:block;font-style:normal;font-weight:400;font-size:11px;color:var(--dim);margin-top:2px}li em.ok{color:var(--green)}li em.miss{color:var(--or)}
 .stats .ok b{color:var(--green)}.stats .no b{color:var(--or)}
 ul{list-style:none}
 li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--panel);border-left:3px solid var(--green);margin-bottom:6px;color:var(--cream);font-weight:700;letter-spacing:.06em;word-break:break-word}
@@ -53,16 +55,16 @@ li small{flex:none;font-weight:400;color:var(--dim);font-size:11px}
       <div class="ok"><b id="nA">0</b>aceitaram</div>
       <div class="no"><b id="nR">0</b>recusaram</div>
       <div><b id="nP">16</b>sem resposta</div>
+      <div class="fi"><b id="nF">0</b>fichas</div>
     </div>
     <h2>ACEITARAM <span id="cA"></span></h2><ul id="lA"></ul>
     <h2>RECUSARAM <span id="cR"></span></h2><ul id="lR"></ul>
     <h2>FICHAS <span id="cF"></span></h2><ul id="lF"></ul>
-    <p class="tag">CPF/RG ficam só na aba "Fichas" da planilha</p>
     <p class="tag" id="upd"></p>
     <button id="refresh">Atualizar</button>
   </div>
 </main>
-<script src="config.js?v=10"></script>
+<script src="config.js?v=11"></script>
 <script>
 const $=s=>document.querySelector(s),TOTAL=16; // 16 convocados
 let senha='';
@@ -72,13 +74,17 @@ async function load(){
   try{d=await (await fetch(API,{method:'POST',body:JSON.stringify({acao:'listar',senha})})).json()}
   catch{$('#msg').textContent='Sem conexão com a planilha. Tente de novo.';return false}
   if(d.erro){$('#msg').textContent='Senha incorreta.';return false}
-  const fill=(ul,rows)=>{ul.replaceChildren(...rows.map(r=>{
-    const li=document.createElement('li'),t=document.createElement('small'),q=new Date(r.quando);
-    li.textContent=r.nome;t.textContent=isNaN(q)?'':q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    li.append(t);return li}));
+  // sub(r) = linha extra embaixo do nome: [texto, classe]
+  const fill=(ul,rows,sub)=>{ul.replaceChildren(...rows.map(r=>{
+    const li=document.createElement('li'),n=document.createElement('span'),t=document.createElement('small'),q=new Date(r.quando);
+    n.textContent=r.nome;t.textContent=isNaN(q)?'':q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    if(sub){const e=document.createElement('em'),[tx,c]=sub(r);e.textContent=tx;e.className=c||'';n.append(e)}
+    li.append(n,t);return li}));
     if(!rows.length){const p=document.createElement('p');p.className='empty';p.textContent='Ninguém ainda.';ul.append(p)}};
   const a=d.lista.filter(r=>r.status==='aceitou'),r=d.lista.filter(x=>x.status==='recusou');
-  fill($('#lA'),a);fill($('#lR'),r);fill($('#lF'),d.fichas||[]);$('#cF').textContent=(d.fichas||[]).length;
+  const f=d.fichas||[],fid=new Set(f.map(x=>x.id)); // ficha e convite no mesmo aparelho = mesmo id
+  fill($('#lA'),a,x=>fid.has(x.id)?['ficha enviada','ok']:['ficha pendente','miss']);fill($('#lR'),r);
+  fill($('#lF'),f,x=>['CPF/RG: '+(x.doc||'—')]);$('#cF').textContent=$('#nF').textContent=f.length;
   $('#nA').textContent=$('#cA').textContent=a.length;$('#nR').textContent=$('#cR').textContent=r.length;
   $('#nP').textContent=Math.max(0,TOTAL-a.length-r.length);
   $('#upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');
