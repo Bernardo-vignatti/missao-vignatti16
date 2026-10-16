@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
 <link rel="icon" href="logo.png">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='14';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
+const V='15';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -227,7 +227,7 @@ body.dark #reveal>*:not(.slots){opacity:.35;transition:opacity .3s}
 </div>
 <div id="flash"></div>
 
-<script src="config.js?v=14"></script>
+<script src="config.js?v=15"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -386,6 +386,7 @@ function demo(){
   return{agentes:nomes.map((nome,i)=>({nome,t:t.map(c=>c[i])})),eu:0};
 }
 async function boot(){
+  if(new URLSearchParams(location.search).has('meuid'))return $('#loadTxt').textContent='> Código deste aparelho: '+dev; // para vincular o aparelho na planilha
   if(new URLSearchParams(location.search).has('teste')){D=demo();me=0;$('#top span').textContent='Modo ensaio // dados fictícios';return scan()}
   try{D=await api()}catch{$('#loadTxt').textContent='> Sem sinal do comando. Recarregue a página.';return}
   if(!D.agentes)return D.revela?wait():($('#loadTxt').textContent='> Sorteio ainda não disponível.');
