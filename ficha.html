@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
 <link rel="icon" href="logo.png">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='15';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='16';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -124,7 +124,7 @@ footer a{color:var(--or)}
   </div>
 </main>
 <footer><a href="./">Abrir a transmissão completa</a></footer>
-<script src="config.js?v=15"></script>
+<script src="config.js?v=16"></script>
 <script>
 const $=s=>document.querySelector(s);
 $('#hey').onclick=()=>$('#hey').remove();setTimeout(()=>$('#hey')?.remove(),3800);

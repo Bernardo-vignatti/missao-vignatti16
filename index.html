@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#15170f">
 <meta name="robots" content="noindex">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='15';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='16';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -487,7 +487,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
   </div>
 </div>
 
-<script src="config.js?v=15"></script>
+<script src="config.js?v=16"></script>
 <script>
 document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -510,7 +510,7 @@ const sfx=(()=>{
     if(!ac){
       ac=new (window.AudioContext||window.webkitAudioContext)();
       out=ac.createGain();out.gain.value=.55;
-      const comp=ac.createDynamicsCompressor();out.connect(comp).connect(ac.destination);
+      const comp=ac.createDynamicsCompressor();out.connect(comp);route(comp);
       // eco curto, para os sons não ficarem "secos"
       const d=ac.createDelay(),fb=ac.createGain(),lp=ac.createBiquadFilter();d.delayTime.value=.19;fb.gain.value=.26;lp.frequency.value=1800;
       out.connect(d);d.connect(lp).connect(fb).connect(d);fb.connect(comp);
@@ -519,7 +519,15 @@ const sfx=(()=>{
       hum=ac.createGain();hum.gain.value=0;const f=ac.createBiquadFilter();f.frequency.value=150;f.connect(hum).connect(comp);
       [55,55.6,82.4].forEach(hz=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=hz;o.connect(f);o.start()});
     }
-    ac.resume();hum.gain.setTargetAtTime(.05,ac.currentTime,1.5);
+    ac.resume();player?.play().catch(()=>{});hum.gain.setTargetAtTime(.05,ac.currentTime,1.5);
+  }
+  // iPhone: o WebAudio respeita a chave do silencioso; tocando por um <audio> o som sai como mídia
+  let player;
+  function route(node){
+    if(!(/iP(hone|ad|od)/.test(navigator.userAgent)||navigator.maxTouchPoints>1&&/Mac/.test(navigator.userAgent))||!ac.createMediaStreamDestination)return node.connect(ac.destination);
+    const md=ac.createMediaStreamDestination();node.connect(md);
+    player=new Audio();player.srcObject=md.stream;player.setAttribute('playsinline','');
+    player.play().catch(()=>{node.disconnect(md);node.connect(ac.destination);player=null});
   }
   function silentWav(){ // 0,1 s de silêncio em WAV
     const n=4410,b=new DataView(new ArrayBuffer(44+n)),w=(o,t)=>[...t].forEach((c,i)=>b.setUint8(o+i,c.charCodeAt(0)));
@@ -540,7 +548,7 @@ const sfx=(()=>{
   }
   return {
     unlock,get on(){return on},
-    set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else if(ac){hum.gain.setTargetAtTime(0,ac.currentTime,.1);ios?.pause()}},
+    set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else if(ac){hum.gain.setTargetAtTime(0,ac.currentTime,.1);ios?.pause();player?.pause()}},
     key:()=>noise(.02,{v:.04,f:2400+Math.random()*2600,q:2}),                                   // digitação
     blip:()=>tone(1250,.06,{v:.05,to:1700}),                                                     // seleção
     dot:()=>tone(720,.07,{v:.03}),                                                               // checkpoint

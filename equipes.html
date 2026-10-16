@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
 <link rel="icon" href="logo.png">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='15';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
+const V='16';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -227,7 +227,7 @@ body.dark #reveal>*:not(.slots){opacity:.35;transition:opacity .3s}
 </div>
 <div id="flash"></div>
 
-<script src="config.js?v=15"></script>
+<script src="config.js?v=16"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -248,12 +248,20 @@ const sfx=(()=>{
     ios||=Object.assign(new Audio(silentWav()),{loop:true});ios.setAttribute('playsinline','');ios.play().catch(()=>{});
     if(!ac){
       ac=new (window.AudioContext||window.webkitAudioContext)();
-      out=ac.createGain();out.gain.value=.55;const comp=ac.createDynamicsCompressor();out.connect(comp).connect(ac.destination);
+      out=ac.createGain();out.gain.value=.55;const comp=ac.createDynamicsCompressor();out.connect(comp);route(comp);
       const d=ac.createDelay(),fb=ac.createGain(),lp=ac.createBiquadFilter();d.delayTime.value=.21;fb.gain.value=.28;lp.frequency.value=1600;
       out.connect(d);d.connect(lp).connect(fb).connect(d);fb.connect(comp);
       nbuf=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const ch=nbuf.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;
     }
-    ac.resume();
+    ac.resume();player?.play().catch(()=>{});
+  }
+  // iPhone: o WebAudio respeita a chave do silencioso; tocando por um <audio> o som sai como mídia
+  let player;
+  function route(node){
+    if(!(/iP(hone|ad|od)/.test(navigator.userAgent)||navigator.maxTouchPoints>1&&/Mac/.test(navigator.userAgent))||!ac.createMediaStreamDestination)return node.connect(ac.destination);
+    const md=ac.createMediaStreamDestination();node.connect(md);
+    player=new Audio();player.srcObject=md.stream;player.setAttribute('playsinline','');
+    player.play().catch(()=>{node.disconnect(md);node.connect(ac.destination);player=null});
   }
   function silentWav(){
     const n=4410,b=new DataView(new ArrayBuffer(44+n)),w=(o,t)=>[...t].forEach((c,i)=>b.setUint8(o+i,c.charCodeAt(0)));
@@ -319,7 +327,7 @@ const sfx=(()=>{
   }
   return{
     unlock,music,get on(){return on},
-    set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else{mus?.stop();ios?.pause()}},
+    set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else{mus?.stop();ios?.pause();player?.pause()}},
     key:()=>noise(.02,{v:.04,f:2400+Math.random()*2600,q:2}),
     data:()=>{for(let i=0;i<6;i++)tone(900+Math.random()*1800,.03,{v:.02,type:'square',at:i*.045})},
     granted:()=>[660,880,1320].forEach((f,i)=>tone(f,.28,{v:.06,type:'triangle',at:i*.09})),
