@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
 <link rel="icon" href="logo.png">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='19';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
+const V='20';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
 <meta name="theme-color" content="#15170f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,10 @@ b{color:var(--cream)}
 #snd{padding:8px 0 8px 12px;font-size:10px;letter-spacing:.12em;color:var(--khaki)}
 
 .screen{display:none;min-height:100vh;min-height:100dvh;padding:64px 16px 40px;max-width:560px;margin:0 auto;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.screen.on{display:flex}
+.screen.on{display:flex;animation:sIn 1s cubic-bezier(.2,.7,.2,1) both}
+.screen.out{animation:sOut .7s ease-in forwards}
+@keyframes sIn{from{opacity:0;filter:blur(10px);transform:scale(1.04)}}
+@keyframes sOut{to{opacity:0;filter:blur(8px);transform:scale(.97)}}
 h1{font:900 clamp(46px,15vw,84px)/.86 var(--disp);color:var(--cream);margin:12px 0 18px}
 h1 em{font-style:normal;color:var(--or)}
 h2{font:900 clamp(34px,11vw,56px)/.9 var(--disp);color:var(--cream);margin:10px 0 18px}
@@ -92,7 +95,7 @@ body.film .cine::before,body.film .cine::after{transform:none}
 #end p.letter{text-align:left;color:var(--cream);font-size:14px;line-height:1.8;margin-bottom:14px;width:100%}
 #end .sig{width:100%;text-align:right;font:900 26px/1 var(--disp);color:var(--ye);margin:6px 0 30px}
 #end .sig small{display:block;font:400 10px var(--mono);letter-spacing:.2em;color:var(--dim);margin-top:6px}
-#fim{font:900 clamp(60px,20vw,110px)/.85 var(--disp);color:var(--cream);margin:10px 0 4px;animation:fade 2.4s both}
+#fim{font:900 clamp(60px,20vw,110px)/.85 var(--disp);color:var(--cream);margin:10px 0 4px;animation:fade 2.6s 1.6s both}
 @keyframes fade{from{opacity:0;letter-spacing:.4em}}
 
 #flash{position:fixed;inset:14%;z-index:60;pointer-events:none;border-radius:50%;opacity:0;background:radial-gradient(circle,var(--fc,#fff) 0,transparent 70%)}
@@ -149,13 +152,16 @@ body.film .cine::before,body.film .cine::after{transform:none}
 </div>
 <div id="flash"></div>
 
-<script src="config.js?v=19"></script>
+<script src="config.js?v=20"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),buzz=p=>navigator.vibrate?.(p);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const show=id=>{$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)};
+let cur='start';
+const show=id=>{$$('.screen').forEach(s=>s.classList.remove('out')||s.classList.toggle('on',s.id===id));cur=id;scrollTo(0,0)};
+// troca de tela: a atual se desfaz (blur) e a próxima surge do escuro
+async function go(id,ms=700){sfx.whoosh();if(!reduce){$('#'+cur).classList.add('out');await sleep(ms)}show(id)}
 const re=(el,c)=>{el.classList.remove(c);void el.offsetWidth;el.classList.add(c)};
 const dev=store.get('dev')||'';
 
@@ -170,8 +176,10 @@ const sfx=(()=>{
     if(!ac){
       ac=new (window.AudioContext||window.webkitAudioContext)();
       out=ac.createGain();out.gain.value=.55;const comp=ac.createDynamicsCompressor();out.connect(comp);route(comp);
-      const d=ac.createDelay(),fb=ac.createGain(),lp=ac.createBiquadFilter();d.delayTime.value=.27;fb.gain.value=.32;lp.frequency.value=1500;
-      out.connect(d);d.connect(lp).connect(fb).connect(d);fb.connect(comp);
+      // reverb de salão: resposta de impulso gerada (ruído que decai em 3s)
+      const rv=ac.createConvolver(),len=ac.sampleRate*3.2|0,ir=ac.createBuffer(2,len,ac.sampleRate),wet=ac.createGain();
+      for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3)}
+      rv.buffer=ir;wet.gain.value=.35;out.connect(rv).connect(wet).connect(comp);
       nbuf=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const ch=nbuf.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;
     }
     ac.resume();player?.play().catch(()=>{});
@@ -206,52 +214,92 @@ const sfx=(()=>{
     fs.forEach(fr=>[0,6].forEach(cents=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=fr;o.detune.value=cents;o.connect(f);o.start(t);o.stop(t+a+dur+.1)}));
   }
 
-  // hino da vitória, original: ré maior, 92 bpm, I-bVI-bVII-I (D, Bb, C, D). camadas: 0 cordas · 1 metais e baixo · 2 melodia e caixa
+  const DMAJ=[73.42,146.83,220,293.66,369.99,440];
+  // acorde final: rufar de tímpano e ré maior aberto, com prato
+  function fin(at=0){
+    for(let i=0;i<16;i++)tone(73.42,.22,{v:.08+i*.02,to:66,at:at+i*.055});
+    const h=at+.9;tone(55,2.4,{v:.7,to:32,at:h});noise(3.5,{v:.07,f:6000,type:'highpass',at:h});
+    brass(DMAJ,h,6,.07,out,.04);brass([587.33,739.99,880],h+.05,6,.03,out,.3);
+  }
+
+  // hino da vitória, original, ré maior, 92 bpm. trilha em seções que mudam no tempo da música:
+  // 0 abertura (cordas + tímpano) · 1 crescendo (baixo, arpejo, metais em swell) · 2 tema completo (coro, melodia, bateria)
+  // 3 créditos: alterna a frase emotiva (Bm-G-D-A) com o tema
   function anthem(){
     if(!live())return null;
     if(mus)return mus;
-    const bus=ac.createGain();bus.gain.value=0;bus.connect(out);bus.gain.setTargetAtTime(.9,ac.currentTime,.8);
-    const pf=ac.createBiquadFilter();pf.type='lowpass';pf.frequency.value=800;const pg=ac.createGain();pg.gain.value=.05;pf.connect(pg).connect(bus);
-    const CH=[[73.42,146.83,220,293.66,369.99],[58.27,116.54,174.61,233.08,293.66],[65.41,130.81,196,261.63,329.63],[73.42,146.83,220,293.66,369.99]];
-    const pad=CH[0].slice(1).map(f=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=Math.random()*12-6;o.connect(pf);o.start();return o});
-    // [passo, nota, duração em colcheias]
-    const MEL=[[0,440,2],[2,587.33,4],[6,523.25,1],[7,587.33,1],[8,466.16,3],[11,440,1],[12,349.23,4],[16,392,2],[18,440,2],[20,523.25,2],[22,659.25,2],[24,587.33,7]];
-    const SP=60/92/2;let level=0,step=0,next=ac.currentTime+.1;
+    const bus=ac.createGain();bus.gain.value=0;bus.connect(out);bus.gain.setTargetAtTime(.9,ac.currentTime,1.2);
+    const pf=ac.createBiquadFilter();pf.type='lowpass';pf.frequency.value=500;const pg=ac.createGain();pg.gain.value=.05;pf.connect(pg).connect(bus);
+    // coro "aah": serras passando por dois formantes, com vibrato
+    const f1=ac.createBiquadFilter(),f2=ac.createBiquadFilter(),cg=ac.createGain();f1.type=f2.type='bandpass';f1.frequency.value=700;f1.Q.value=5;f2.frequency.value=1150;f2.Q.value=7;
+    cg.gain.value=0;f1.connect(cg);f2.connect(cg);cg.connect(bus);
+    const vib=ac.createOscillator(),vg=ac.createGain();vib.frequency.value=5;vg.gain.value=6;vib.connect(vg);vib.start();
+    const voice=dest=>{const o=ac.createOscillator();o.type='sawtooth';o.detune.value=Math.random()*14-7;vg.connect(o.detune);o.connect(dest);o.start();return o};
+    const strings=[0,1,2,3].map(()=>voice(pf)),choir=[0,1,2].map(()=>{const o=voice(f1);o.connect(f2);return o});
+    const CH={D:[73.42,146.83,220,293.66,369.99],Bb:[58.27,116.54,174.61,233.08,293.66],C:[65.41,130.81,196,261.63,329.63],
+      Bm:[61.74,123.47,185,246.94,293.66],G:[49,98,146.83,196,246.94],A:[55,110,164.81,220,277.18]};
+    // melodias: [passo, nota, duração em colcheias]
+    const PA={ch:['D','Bb','C','D'],mel:[[0,440,2],[2,587.33,4],[6,523.25,1],[7,587.33,1],[8,466.16,3],[11,440,1],[12,349.23,4],[16,392,2],[18,440,2],[20,523.25,2],[22,659.25,2],[24,587.33,7]]};
+    const PB={ch:['Bm','G','D','A'],soft:1,mel:[[0,739.99,4],[4,659.25,2],[6,587.33,2],[8,587.33,4],[12,493.88,2],[14,587.33,2],[16,440,3],[19,587.33,1],[20,739.99,4],[24,659.25,6],[30,554.37,2]]};
+    const SP=60/92/2;let level=0,pend=null,pendAt=0,fim=false,over=false,step=0,phrase=0,next=ac.currentTime+.1;
+    const setChord=(c,t)=>{strings.forEach((o,i)=>o.frequency.setTargetAtTime(c[i+1],t,.15));choir.forEach((o,i)=>o.frequency.setTargetAtTime(c[i+2],t,.12))};
+    setChord(CH.D,ac.currentTime);
+    function mix(n,t=ac.currentTime){pf.frequency.setTargetAtTime([500,900,1500,1300][n],t,.8);cg.gain.setTargetAtTime([0,.015,.05,.05][n],t,.8)}
+    function pluck(f,at,v){const t=ac.currentTime+at,o=ac.createOscillator(),fl=ac.createBiquadFilter(),g=ac.createGain();o.type='sawtooth';o.frequency.value=f;
+      fl.type='lowpass';fl.Q.value=4;fl.frequency.setValueAtTime(2400,t);fl.frequency.exponentialRampToValueAtTime(300,t+.25);env(g,t,v,.004,.28);o.connect(fl).connect(g).connect(bus);o.start(t);o.stop(t+.35)}
+    const tim=(f,at,v)=>{tone(f,.9,{v,to:f*.85,at,dest:bus});noise(.35,{v:v*.15,f:150,type:'lowpass',at,dest:bus})};
+    const crash=at=>{noise(2.4,{v:.07,f:6000,type:'highpass',at,dest:bus});tone(55,.8,{v:.5,to:36,at,dest:bus})};
     function play(s,t){
-      const at=t-ac.currentTime,bar=s>>3,b=s%8,c=CH[bar];
-      if(b===0)pad.forEach((o,i)=>o.frequency.setTargetAtTime(c[i+1],t,.1));
-      if(b===0||b===4){tone(c[0],.8,{v:.5,to:c[0]*.85,at,dest:bus});noise(.3,{v:.06,f:160,type:'lowpass',at,dest:bus})} // tímpano
+      const at=t-ac.currentTime,bar=s>>3,b=s%8,P=level===3&&phrase%2===0?PB:PA,c=CH[P.ch[bar]];
+      if(b===0)setChord(c,t);
+      if(b===0||level>=1&&b===4)tim(c[0],at,level?.42:.26);
       if(level>=1){
-        if(b===0)brass(c,at,SP*8,.04,bus,.08);
-        tone(c[0],SP*.7,{type:'triangle',v:.22,at,dest:bus});                                   // baixo em colcheias
+        tone(c[0],SP*.8,{type:'triangle',v:.2,at,dest:bus});                                       // baixo em colcheias
+        pluck(c[[2,3,4,3][b%4]]*2,at,.03);                                                         // arpejo
       }
+      if(level===1&&b===0)brass(c,at,SP*8,.03,bus,1.2);                                            // metais crescendo
       if(level>=2){
-        if(b===2||b===6)noise(.18,{v:.13,f:1900,q:.8,at,dest:bus});                             // caixa
-        if(bar===3&&b>=5)noise(.06,{v:.08,f:2200,q:.8,at:at+SP/2,dest:bus});                    // virada
-        if(s===0)noise(2,{v:.05,f:7000,type:'highpass',at,dest:bus});                           // prato
-        const m=MEL.find(x=>x[0]===s);if(m)brass([m[1],m[1]/2],at,SP*m[2]*.95,.05,bus);
+        if(b===0)brass(c,at,SP*7.5,P.soft?.025:.04,bus,P.soft?.5:.05);
+        if(!P.soft){
+          if(b===2||b===6)noise(.18,{v:.13,f:1900,q:.8,at,dest:bus});                             // caixa
+          if(b===3||b===7)tone(110,.3,{v:.22,to:70,at,dest:bus});                                  // surdo
+          if(bar===3&&b>=4)[0,.5].forEach(h=>noise(.06,{v:.05+(b-4)*.02,f:2200,q:.8,at:at+SP*h,dest:bus})); // virada
+        }
+        const m=P.mel.find(x=>x[0]===s);if(m)brass([m[1],m[1]/2],at,SP*m[2]*.92,P.soft?.04:.05,bus,P.soft?.1:.03);
       }
     }
-    const timer=setInterval(()=>{while(next<ac.currentTime+.15){play(step,next);next+=SP;step=(step+1)%32}},25);
+    function ending(t){                                                                             // resolve no tempo e some
+      fin(t-ac.currentTime);bus.gain.setTargetAtTime(0,t+.9,1.2);
+      setTimeout(()=>{clearInterval(timer);[...strings,...choir,vib].forEach(o=>o.stop());bus.disconnect()},(t-ac.currentTime)*1000+8000);
+    }
+    const timer=setInterval(()=>{while(!over&&next<ac.currentTime+.2){
+      if(pend!=null&&next>=pendAt-.01){level=pend;pend=null;step=0;phrase=0;mix(level,next);crash(next-ac.currentTime)}
+      if(fim&&step%4===0){over=true;ending(next);break}
+      play(step,next);next+=SP;if(++step===32){step=0;phrase++}
+    }},25);
+    mix(0);
     return mus={
-      level(n){level=n;pf.frequency.setTargetAtTime(n>=2?1400:800,ac.currentTime,.6)},
-      cut(){bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(0,ac.currentTime,.05)},
-      back(n){if(n!=null)this.level(n);bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(.9,ac.currentTime,.1)},
-      stop(){bus.gain.setTargetAtTime(0,ac.currentTime,.6);setTimeout(()=>{clearInterval(timer);pad.forEach(o=>o.stop());bus.disconnect()},4000);mus=null},
+      set(n){level=n;mix(n)},
+      // muda de seção no próximo compasso, com um prato invertido crescendo até lá
+      to(n){const now=ac.currentTime;let tb=next+SP*((8-step%8)%8);if(tb-now<1.2)tb+=SP*8;pend=n;pendAt=tb;
+        const d=tb-now;noise(d,{v:.09,f:400,to:7000,q:.7,a:d*.97,dest:bus})},
+      // golpe: reinicia o tema no tempo 1, na hora
+      hit(){level=2;pend=null;step=0;phrase=0;next=ac.currentTime+.02;mix(2);bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(.9,ac.currentTime,.02);crash(.02)},
+      cut(){bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(0,ac.currentTime,.08)},
+      finale(){fim=true;mus=null},
+      stop(){over=true;bus.gain.setTargetAtTime(0,ac.currentTime,.6);setTimeout(()=>{clearInterval(timer);[...strings,...choir,vib].forEach(o=>o.stop());bus.disconnect()},4000);mus=null},
     };
   }
-  const DMAJ=[73.42,146.83,220,293.66,369.99,440];
   return{
     unlock,anthem,get on(){return on},
     set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else{mus?.stop();ios?.pause();player?.pause()}},
     key:()=>noise(.02,{v:.04,f:2400+Math.random()*2600,q:2}),
     data:()=>{for(let i=0;i<6;i++)tone(900+Math.random()*1800,.03,{v:.02,type:'square',at:i*.045})},
     tick:()=>tone(1500,.03,{v:.025,type:'square'}),
+    whoosh:()=>noise(.7,{v:.05,f:300,to:2600,q:1.2,a:.45}),
     rise:d=>{noise(d,{v:.07,f:200,to:5000,q:3,a:d*.9});tone(110,d,{v:.04,to:440,type:'sawtooth',a:d*.9})},
     impact:()=>{tone(150,.5,{v:.7,to:30});noise(1,{v:.4,f:2400,to:60,type:'lowpass'});noise(.4,{v:.12,f:6000,to:1500,q:.5,at:.02});brass(DMAJ,.04,2.6,.06);tone(4200,.6,{v:.02,to:900,at:.1})},
     splat:()=>noise(.12,{v:.2,f:700,to:150,type:'lowpass'}),
-    // acorde final: rufar de tímpano e ré maior aberto
-    fin:()=>{for(let i=0;i<16;i++)tone(73.42,.22,{v:.1+i*.02,to:66,at:i*.055});tone(55,1.8,{v:.7,to:32,at:.9});brass(DMAJ,.9,5,.07);brass([587.33,739.99,880],1,5,.03)},
   };
 })();
 ['pointerdown','keydown','click'].forEach(e=>addEventListener(e,sfx.unlock,{passive:true}));
@@ -274,7 +322,7 @@ async function type(el,txt,cps=38){
 }
 const COLORS=['#f6f4ee','#ffc928','#ff5a1f'];
 function burst(n=12){
-  const fl=$('#flash');fl.style.setProperty('--fc','#ffc928');re(fl,'go');re($('#done'),'shake');
+  const fl=$('#flash');fl.style.setProperty('--fc','#ffc928');re(fl,'go');['.medal','#doneH','#stamp'].forEach(q=>re($(q),'shake'));
   if(reduce)return;
   for(let i=0;i<3;i++)setTimeout(()=>{const r=document.createElement('i');r.className='ring';r.style.setProperty('--c',COLORS[i]);document.body.append(r);setTimeout(()=>r.remove(),1000)},i*130);
   for(let i=0;i<n;i++)setTimeout(()=>{const s=document.createElement('i');s.className='splat';
@@ -293,24 +341,25 @@ const isCmd=n=>n.toLowerCase()==='vignatti';
 
 // ---- sequência ----
 $('#go').onclick=async()=>{
-  sfx.unlock();show('intro');document.body.classList.add('film');
-  M=sfx.anthem();mus('level',0);
+  sfx.unlock();M=sfx.anthem();mus('set',0);
+  document.body.classList.add('film');await go('intro',900);
   const log=$('#log');log.textContent='';
   await sleep(1000);
   await type(log,'> TRANSMISSÃO FINAL DO COMANDO\n');await sleep(400);
-  await type(log,'> OPERAÇÃO: VIGNATTI 16\n');await sleep(300);mus('level',1);
+  await type(log,'> OPERAÇÃO: VIGNATTI 16\n');await sleep(300);mus('set',1);
   await type(log,`> AGENTES EM CAMPO: ${NOMES.length}\n`);await sleep(250);
   await type(log,'> CAMPOS DE BATALHA: 3\n');await sleep(250);
   await type(log,'> BAIXAS: NENHUMA (SÓ HEMATOMAS)\n');await sleep(600);
   await type(log,'> STATUS DA MISSÃO...',20);
-  sfx.rise(1.8);await sleep(1500);mus('cut');await sleep(500);
+  sfx.rise(1.8);await sleep(1500);
+  mus('cut');$('#intro').classList.add('out');await sleep(reduce?0:900); // um instante de silêncio no escuro antes do golpe
   done();
 };
 
 async function done(){
-  show('done');document.body.classList.remove('film');
   ['#thanksTxt','#toCredits'].forEach(s=>$(s).classList.add('hidden'));$('#thanks').textContent='';$('#stats').replaceChildren();$('#stamp').replaceChildren();
-  sfx.impact();buzz([80,40,160]);burst();mus('back',2);
+  show('done');document.body.classList.remove('film');
+  mus('hit');sfx.impact();buzz([80,40,160]);burst();
   await sleep(500);
   const st=document.createElement('div');st.className='stampT';st.textContent='CUMPRIDA';$('#stamp').append(st);
   sfx.impact();buzz([60,30,120]);burst(8);
@@ -330,8 +379,8 @@ async function done(){
 
 // créditos de filme subindo
 let ending;
-$('#toCredits').onclick=()=>{
-  show('credits');document.body.classList.add('film');mus('level',1);
+$('#toCredits').onclick=async()=>{
+  mus('to',3);document.body.classList.add('film');
   const sec=(h,...ps)=>`<section><h3>${h}</h3>${ps.join('')}</section>`;
   const esc=s=>s.replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
   const elenco=NOMES.filter(n=>!isCmd(n)).sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}))
@@ -347,6 +396,7 @@ $('#toCredits').onclick=()=>{
     sec('Aviso','<p>NENHUM AGENTE FOI FERIDO NESTA MISSÃO*</p><small>*hematomas não contam</small>')+
     sec('Agradecimento especial','<p>A VOCÊ, QUE ESTAVA LÁ</p>')+
     sec('','<p class="big">OBRI<br><em>GADO</em></p>');
+  await go('credits',1100);
   const roll=$('#roll');
   roll.style.setProperty('--d',(roll.offsetHeight+innerHeight)/60+'s');re(roll,'roll');
   roll.onanimationend=end;
@@ -354,12 +404,12 @@ $('#toCredits').onclick=()=>{
 };
 $('#skip').onclick=()=>end();
 
-function end(){
+async function end(){
   if(ending)return;ending=true;
-  show('end');document.body.classList.remove('film');
-  mus('stop');M=null;sfx.fin();buzz([60,60,200]);
+  mus('finale');M=null;buzz([60,60,200]); // a música resolve no próximo tempo forte
+  await go('end',1400);document.body.classList.remove('film');
 }
-$('#replay').onclick=()=>{ending=false;show('start')};
+$('#replay').onclick=()=>{ending=false;go('start')};
 </script>
 </body>
 </html>
