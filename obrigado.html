@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Missão Cumprida // Vignatti 16</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Missão Cumprida // Vignatti 16">
+<meta property="og:description" content="Transmissão final do comando. Aumente o volume.">
+<meta property="og:image" content="https://bernardo-vignatti.github.io/missao-vignatti16/logo.png">
+<link rel="icon" href="logo.png">
+<script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
+const V='18';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+(location.search?location.search+'&':'?')+'v='+v)}).catch(()=>{});</script>
+<meta name="theme-color" content="#15170f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#15170f;--panel:#1f2218;--line:#3a3d2c;--or:#ff5a1f;--cream:#ece4cc;--khaki:#b5ad8c;--dim:#7d7a62;--green:#a9c56f;
+  --wh:#f6f4ee;--ye:#ffc928;
+  --disp:'Big Shoulders Stencil',Impact,'Arial Narrow',sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{color:var(--khaki);font:400 14px/1.6 var(--mono);overflow-x:hidden;min-height:100vh;min-height:100dvh;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:28px 28px}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:90;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.55))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--or);outline-offset:3px}
+b{color:var(--cream)}
+.tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.btn{display:block;width:100%;padding:16px 14px;border:1px solid var(--or);color:var(--or);font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-align:center;font-size:13px;transition:background .2s,color .2s}
+.btn:hover,.btn:active{background:var(--or);color:var(--bg)}
+.btn.ghost{border-color:var(--line);color:var(--khaki)}
+
+#top{position:fixed;top:0;left:0;right:0;z-index:40;height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:rgba(21,23,15,.92);border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+#top::before{content:'';position:absolute;left:0;right:0;bottom:100%;height:140px;background:var(--bg)}
+#snd{padding:8px 0 8px 12px;font-size:10px;letter-spacing:.12em;color:var(--khaki)}
+
+.screen{display:none;min-height:100vh;min-height:100dvh;padding:64px 16px 40px;max-width:560px;margin:0 auto;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.screen.on{display:flex}
+h1{font:900 clamp(46px,15vw,84px)/.86 var(--disp);color:var(--cream);margin:12px 0 18px}
+h1 em{font-style:normal;color:var(--or)}
+h2{font:900 clamp(34px,11vw,56px)/.9 var(--disp);color:var(--cream);margin:10px 0 18px}
+.up{animation:up .5s both}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+
+.cine::before,.cine::after{content:'';position:fixed;left:0;right:0;height:7vh;background:#000;z-index:50;transition:transform .9s cubic-bezier(.7,0,.2,1);pointer-events:none}
+.cine::before{top:0;transform:translateY(-101%)}.cine::after{bottom:0;transform:translateY(101%)}
+body.film .cine::before,body.film .cine::after{transform:none}
+
+/* relatório */
+#intro{align-items:stretch;text-align:left}
+#log{min-height:11em;font-size:13px;line-height:1.9;color:var(--green);letter-spacing:.08em;text-transform:uppercase;white-space:pre-wrap}
+#log::after{content:'█';animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* missão cumprida */
+#done{position:relative}
+.medal{position:relative;width:120px;height:120px;margin:0 auto 8px}
+.medal::before{content:'';position:absolute;inset:-90px;border-radius:50%;z-index:-1;opacity:.5;
+  background:repeating-conic-gradient(rgba(255,201,40,.22) 0 8deg,transparent 8deg 24deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%);animation:spin 24s linear infinite}
+.medal svg{width:100%;height:100%;animation:medal .9s cubic-bezier(.2,1.5,.4,1) both;filter:drop-shadow(0 0 22px rgba(255,201,40,.55))}
+@keyframes medal{from{transform:scale(0) rotate(-200deg);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#doneH{margin-bottom:6px}
+.stampT{--c:var(--ye);display:inline-block;font:900 clamp(40px,13vw,70px)/.9 var(--disp);color:var(--c);border:5px solid var(--c);padding:10px 16px 6px;transform:rotate(-4deg);animation:slam .45s cubic-bezier(.2,1.6,.4,1) both;background:var(--bg);box-shadow:0 0 50px -8px var(--c)}
+@keyframes slam{from{transform:scale(3) rotate(-4deg);opacity:0}to{transform:scale(1) rotate(-4deg);opacity:1}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin:30px 0 26px}
+.stats div{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--c,var(--wh));padding:12px 6px;animation:up .4s both}
+.stats b{display:block;font:900 40px/1 var(--disp);color:var(--c,var(--wh));font-variant-numeric:tabular-nums}
+.stats span{display:block;font-size:9px;letter-spacing:.2em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+#thanks{min-height:1.8em;white-space:pre-line}
+#thanks+p{max-width:340px;margin:0 auto 24px}
+.hidden{visibility:hidden}
+
+/* créditos */
+#credits.on{display:block}
+#credits{position:fixed;inset:0;max-width:none;padding:0;overflow:hidden;background:#000}
+.roll{position:absolute;left:0;right:0;top:100%;padding:0 16px;text-align:center;animation:roll var(--d,40s) linear forwards}
+@keyframes roll{to{transform:translateY(calc(-100% - 100vh))}}
+.roll section{margin:0 auto 64px;max-width:420px}
+.roll h3{font:700 10px var(--mono);letter-spacing:.3em;color:var(--dim);margin-bottom:12px;text-transform:uppercase}
+.roll p{font:900 28px/1.15 var(--disp);color:var(--cream);letter-spacing:.03em}
+.roll p.me{color:var(--ye)}
+.roll .big{font:900 clamp(56px,18vw,96px)/.86 var(--disp);color:var(--cream)}
+.roll .big em{font-style:normal;color:var(--or)}
+.roll small{display:block;font-size:11px;color:var(--khaki);letter-spacing:.1em;margin-top:6px}
+#skip{position:fixed;right:12px;bottom:calc(7vh + 10px);z-index:60;padding:8px 10px;font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+
+/* carta final */
+#end p.letter{text-align:left;color:var(--cream);font-size:14px;line-height:1.8;margin-bottom:14px;width:100%}
+#end .sig{width:100%;text-align:right;font:900 26px/1 var(--disp);color:var(--ye);margin:6px 0 30px}
+#end .sig small{display:block;font:400 10px var(--mono);letter-spacing:.2em;color:var(--dim);margin-top:6px}
+#fim{font:900 clamp(60px,20vw,110px)/.85 var(--disp);color:var(--cream);margin:10px 0 4px;animation:fade 2.4s both}
+@keyframes fade{from{opacity:0;letter-spacing:.4em}}
+
+#flash{position:fixed;inset:14%;z-index:60;pointer-events:none;border-radius:50%;opacity:0;background:radial-gradient(circle,var(--fc,#fff) 0,transparent 70%)}
+#flash.go{animation:flash .9s ease-out}
+@keyframes flash{0%{opacity:.95;transform:scale(.3)}100%{opacity:0;transform:scale(1.8)}}
+.ring{position:fixed;left:50%;top:50%;z-index:58;width:40px;height:40px;margin:-20px;border-radius:50%;border:3px solid var(--c);pointer-events:none;animation:ring .9s ease-out forwards}
+@keyframes ring{to{transform:scale(13);opacity:0;border-width:1px}}
+.splat{position:fixed;z-index:55;pointer-events:none;width:var(--s);height:var(--s);left:var(--x);top:var(--y);background:var(--c);opacity:.92;
+  border-radius:47% 53% 41% 59%/55% 44% 56% 45%;animation:splat 2s cubic-bezier(.2,1.4,.4,1) forwards}
+.splat::before,.splat::after{content:'';position:absolute;border-radius:50%;background:inherit}
+.splat::before{width:30%;height:30%;left:-22%;top:20%}.splat::after{width:22%;height:22%;right:-26%;bottom:6%}
+@keyframes splat{0%{transform:scale(0) rotate(var(--r))}30%{transform:scale(1.1) rotate(var(--r))}45%{transform:scale(1) rotate(var(--r));opacity:.92}100%{transform:scale(1) rotate(var(--r));opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{15%{transform:translate(-8px,4px)}30%{transform:translate(7px,-5px)}50%{transform:translate(-5px,-3px)}70%{transform:translate(4px,5px)}85%{transform:translate(-2px,1px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.roll{top:0;position:static;padding:60px 16px}#credits{overflow:auto}}
+</style>
+</head>
+<body>
+<div class="cine"></div>
+<header id="top"><span>Comando // transmissão final</span><button id="snd" aria-pressed="true">SOM ON</button></header>
+
+<!-- início: o toque libera o som -->
+<div class="screen on" id="start">
+  <span class="tag">Transmissão final do comando</span>
+  <h1>MISSÃO<br><em>VIGNATTI 16</em></h1>
+  <p class="tag" style="margin-bottom:28px">Relatório pós-operação // confidencial</p>
+  <button class="btn" id="go">Receber transmissão</button>
+  <p class="tag" style="margin-top:14px">Aumente o volume</p>
+</div>
+
+<div class="screen" id="intro"><div id="log"></div></div>
+
+<div class="screen" id="done">
+  <div class="medal" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="#1f2218" stroke="#ffc928" stroke-width="5"/><circle cx="60" cy="60" r="43" fill="none" stroke="#ffc928" stroke-width="1.5" stroke-dasharray="3 5"/><path d="m60 26 9.4 21.6 23.4 2.1-17.7 15.5 5.3 23-20.4-12.1-20.4 12.1 5.3-23L27.2 49.7l23.4-2.1Z" fill="#ffc928"/></svg></div>
+  <h1 id="doneH">MISSÃO</h1>
+  <div id="stamp" style="min-height:90px"></div>
+  <div class="stats" id="stats"></div>
+  <h2 id="thanks"></h2>
+  <p class="hidden" id="thanksTxt">Missão dada é missão cumprida. E ela só foi cumprida porque você estava lá.</p>
+  <button class="btn hidden" id="toCredits">Ver créditos</button>
+</div>
+
+<div class="screen" id="credits"><div class="roll" id="roll"></div><button id="skip">Pular ›</button></div>
+
+<div class="screen" id="end">
+  <span class="tag">Mensagem do comandante</span>
+  <h2>AGENTES,</h2>
+  <p class="letter">Obrigado por terem vindo. Cada tiro, cada emboscada, cada risada e cada hematoma fizeram dos meus 16 anos uma missão que eu nunca vou esquecer.</p>
+  <p class="letter">Foi uma honra lutar ao lado de vocês (e contra vocês também).</p>
+  <p class="sig">VIGNATTI<small>Comandante // 17.10</small></p>
+  <div id="fim">FIM DA<br>MISSÃO</div>
+  <p class="tag" style="margin-bottom:28px">Operação Vignatti 16 // arquivada</p>
+  <button class="btn ghost" id="replay">Assistir de novo</button>
+</div>
+<div id="flash"></div>
+
+<script src="config.js?v=18"></script>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms)),buzz=p=>navigator.vibrate?.(p);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const show=id=>{$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)};
+const re=(el,c)=>{el.classList.remove(c);void el.offsetWidth;el.classList.add(c)};
+const dev=store.get('dev')||'';
+
+// ---- áudio: mesmo motor das equipes (WebAudio sintetizado, sai no silencioso do iPhone) ----
+const sfx=(()=>{
+  let ac,out,nbuf,ios,mus,player,on=store.get('snd')!=='0';
+  const live=()=>on&&ac&&ac.state==='running';
+  function unlock(){
+    if(!on)return;
+    try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch{}
+    ios||=Object.assign(new Audio(silentWav()),{loop:true});ios.setAttribute('playsinline','');ios.play().catch(()=>{});
+    if(!ac){
+      ac=new (window.AudioContext||window.webkitAudioContext)();
+      out=ac.createGain();out.gain.value=.55;const comp=ac.createDynamicsCompressor();out.connect(comp);route(comp);
+      const d=ac.createDelay(),fb=ac.createGain(),lp=ac.createBiquadFilter();d.delayTime.value=.27;fb.gain.value=.32;lp.frequency.value=1500;
+      out.connect(d);d.connect(lp).connect(fb).connect(d);fb.connect(comp);
+      nbuf=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const ch=nbuf.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;
+    }
+    ac.resume();player?.play().catch(()=>{});
+  }
+  function route(node){
+    if(!(/iP(hone|ad|od)/.test(navigator.userAgent)||navigator.maxTouchPoints>1&&/Mac/.test(navigator.userAgent))||!ac.createMediaStreamDestination)return node.connect(ac.destination);
+    const md=ac.createMediaStreamDestination();node.connect(md);
+    player=new Audio();player.srcObject=md.stream;player.setAttribute('playsinline','');
+    player.play().catch(()=>{node.disconnect(md);node.connect(ac.destination);player=null});
+  }
+  function silentWav(){
+    const n=4410,b=new DataView(new ArrayBuffer(44+n)),w=(o,t)=>[...t].forEach((c,i)=>b.setUint8(o+i,c.charCodeAt(0)));
+    w(0,'RIFF');b.setUint32(4,36+n,true);w(8,'WAVEfmt ');b.setUint32(16,16,true);b.setUint16(20,1,true);b.setUint16(22,1,true);
+    b.setUint32(24,44100,true);b.setUint32(28,44100,true);b.setUint16(32,1,true);b.setUint16(34,8,true);w(36,'data');b.setUint32(40,n,true);
+    for(let i=0;i<n;i++)b.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}));
+  }
+  const env=(g,t,v,a,d)=>{g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)};
+  function tone(f,d,{type='sine',v=.08,to,a=.005,at=0,dest}={}){
+    if(!live())return;const t=ac.currentTime+at,o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+a+d);
+    env(g,t,v,a,d);o.connect(g).connect(dest||out);o.start(t);o.stop(t+a+d+.05);
+  }
+  function noise(d,{v=.08,f=1000,to,q=1,type='bandpass',a=.005,at=0,dest}={}){
+    if(!live())return;const t=ac.currentTime+at,s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain();
+    s.buffer=nbuf;s.loop=true;fl.type=type;fl.Q.value=q;fl.frequency.setValueAtTime(f,t);if(to)fl.frequency.exponentialRampToValueAtTime(to,t+a+d);
+    env(g,t,v,a,d);s.connect(fl).connect(g).connect(dest||out);s.start(t,Math.random()*.9);s.stop(t+a+d+.05);
+  }
+  function brass(fs,at=0,dur=1.8,v=.07,dest=out,a=.03){
+    if(!live())return;const t=ac.currentTime+at,f=ac.createBiquadFilter(),g=ac.createGain();
+    f.type='lowpass';f.Q.value=2;f.frequency.setValueAtTime(250,t);f.frequency.exponentialRampToValueAtTime(2600,t+.12);f.frequency.exponentialRampToValueAtTime(500,t+dur);
+    env(g,t,v,a,dur);f.connect(g).connect(dest);
+    fs.forEach(fr=>[0,6].forEach(cents=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=fr;o.detune.value=cents;o.connect(f);o.start(t);o.stop(t+a+dur+.1)}));
+  }
+
+  // hino da vitória, original: ré maior, 92 bpm, I-bVI-bVII-I (D, Bb, C, D). camadas: 0 cordas · 1 metais e baixo · 2 melodia e caixa
+  function anthem(){
+    if(!live())return null;
+    if(mus)return mus;
+    const bus=ac.createGain();bus.gain.value=0;bus.connect(out);bus.gain.setTargetAtTime(.9,ac.currentTime,.8);
+    const pf=ac.createBiquadFilter();pf.type='lowpass';pf.frequency.value=800;const pg=ac.createGain();pg.gain.value=.05;pf.connect(pg).connect(bus);
+    const CH=[[73.42,146.83,220,293.66,369.99],[58.27,116.54,174.61,233.08,293.66],[65.41,130.81,196,261.63,329.63],[73.42,146.83,220,293.66,369.99]];
+    const pad=CH[0].slice(1).map(f=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=Math.random()*12-6;o.connect(pf);o.start();return o});
+    // [passo, nota, duração em colcheias]
+    const MEL=[[0,440,2],[2,587.33,4],[6,523.25,1],[7,587.33,1],[8,466.16,3],[11,440,1],[12,349.23,4],[16,392,2],[18,440,2],[20,523.25,2],[22,659.25,2],[24,587.33,7]];
+    const SP=60/92/2;let level=0,step=0,next=ac.currentTime+.1;
+    function play(s,t){
+      const at=t-ac.currentTime,bar=s>>3,b=s%8,c=CH[bar];
+      if(b===0)pad.forEach((o,i)=>o.frequency.setTargetAtTime(c[i+1],t,.1));
+      if(b===0||b===4){tone(c[0],.8,{v:.5,to:c[0]*.85,at,dest:bus});noise(.3,{v:.06,f:160,type:'lowpass',at,dest:bus})} // tímpano
+      if(level>=1){
+        if(b===0)brass(c,at,SP*8,.04,bus,.08);
+        tone(c[0],SP*.7,{type:'triangle',v:.22,at,dest:bus});                                   // baixo em colcheias
+      }
+      if(level>=2){
+        if(b===2||b===6)noise(.18,{v:.13,f:1900,q:.8,at,dest:bus});                             // caixa
+        if(bar===3&&b>=5)noise(.06,{v:.08,f:2200,q:.8,at:at+SP/2,dest:bus});                    // virada
+        if(s===0)noise(2,{v:.05,f:7000,type:'highpass',at,dest:bus});                           // prato
+        const m=MEL.find(x=>x[0]===s);if(m)brass([m[1],m[1]/2],at,SP*m[2]*.95,.05,bus);
+      }
+    }
+    const timer=setInterval(()=>{while(next<ac.currentTime+.15){play(step,next);next+=SP;step=(step+1)%32}},25);
+    return mus={
+      level(n){level=n;pf.frequency.setTargetAtTime(n>=2?1400:800,ac.currentTime,.6)},
+      cut(){bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(0,ac.currentTime,.05)},
+      back(n){if(n!=null)this.level(n);bus.gain.cancelScheduledValues(ac.currentTime);bus.gain.setTargetAtTime(.9,ac.currentTime,.1)},
+      stop(){bus.gain.setTargetAtTime(0,ac.currentTime,.6);setTimeout(()=>{clearInterval(timer);pad.forEach(o=>o.stop());bus.disconnect()},4000);mus=null},
+    };
+  }
+  const DMAJ=[73.42,146.83,220,293.66,369.99,440];
+  return{
+    unlock,anthem,get on(){return on},
+    set(v){on=v;store.set('snd',v?'1':'0');if(v)unlock();else{mus?.stop();ios?.pause();player?.pause()}},
+    key:()=>noise(.02,{v:.04,f:2400+Math.random()*2600,q:2}),
+    data:()=>{for(let i=0;i<6;i++)tone(900+Math.random()*1800,.03,{v:.02,type:'square',at:i*.045})},
+    tick:()=>tone(1500,.03,{v:.025,type:'square'}),
+    rise:d=>{noise(d,{v:.07,f:200,to:5000,q:3,a:d*.9});tone(110,d,{v:.04,to:440,type:'sawtooth',a:d*.9})},
+    impact:()=>{tone(150,.5,{v:.7,to:30});noise(1,{v:.4,f:2400,to:60,type:'lowpass'});noise(.4,{v:.12,f:6000,to:1500,q:.5,at:.02});brass(DMAJ,.04,2.6,.06);tone(4200,.6,{v:.02,to:900,at:.1})},
+    splat:()=>noise(.12,{v:.2,f:700,to:150,type:'lowpass'}),
+    // acorde final: rufar de tímpano e ré maior aberto
+    fin:()=>{for(let i=0;i<16;i++)tone(73.42,.22,{v:.1+i*.02,to:66,at:i*.055});tone(55,1.8,{v:.7,to:32,at:.9});brass(DMAJ,.9,5,.07);brass([587.33,739.99,880],1,5,.03)},
+  };
+})();
+['pointerdown','keydown','click'].forEach(e=>addEventListener(e,sfx.unlock,{passive:true}));
+const snd=$('#snd'),paintSnd=()=>{snd.textContent='SOM '+(sfx.on?'ON':'OFF');snd.setAttribute('aria-pressed',sfx.on)};
+snd.onclick=()=>{sfx.set(!sfx.on);paintSnd()};paintSnd();
+let M=null;const mus=(fn,...a)=>M?.[fn](...a);
+
+const GLYPHS='ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#/';
+function scramble(el,txt,dur=900){
+  if(reduce){el.textContent=txt;return Promise.resolve()}
+  sfx.data();
+  return new Promise(res=>{const t0=performance.now();(function f(now){
+    const p=Math.min(1,(now-t0)/dur),n=Math.floor(p*txt.length);let o=txt.slice(0,n);
+    for(let i=n;i<txt.length;i++)o+=/\s/.test(txt[i])?txt[i]:GLYPHS[Math.random()*GLYPHS.length|0];
+    el.textContent=o;p<1?requestAnimationFrame(f):res()})(t0)});
+}
+async function type(el,txt,cps=38){
+  if(reduce){el.textContent+=txt;return}
+  let i=0;for(const c of txt){el.textContent+=c;if(i++%2===0&&c.trim())sfx.key();await sleep(1000/cps)}
+}
+const COLORS=['#f6f4ee','#ffc928','#ff5a1f'];
+function burst(n=12){
+  const fl=$('#flash');fl.style.setProperty('--fc','#ffc928');re(fl,'go');re($('#done'),'shake');
+  if(reduce)return;
+  for(let i=0;i<3;i++)setTimeout(()=>{const r=document.createElement('i');r.className='ring';r.style.setProperty('--c',COLORS[i]);document.body.append(r);setTimeout(()=>r.remove(),1000)},i*130);
+  for(let i=0;i<n;i++)setTimeout(()=>{const s=document.createElement('i');s.className='splat';
+    s.style.cssText=`--c:${COLORS[i%3]};--s:${26+Math.random()*90}px;--x:${4+Math.random()*82}%;--y:${12+Math.random()*72}%;--r:${Math.random()*360}deg`;
+    document.body.append(s);sfx.splat();setTimeout(()=>s.remove(),2100)},120+i*70);
+}
+
+// ---- elenco: vem da planilha (só quem aceitou); sem sinal, usa a lista do dia ----
+const DIA=['Vignatti','HENRIQUE','ALESSI','JOAO VIVAN','NICOLAS','FEPO','WEBSTERZ','COSTA','Bortoline','ENZO','LUIZ','GUILHERME','GABRIEL BRITZ','MARCO','GABRIEL BRESSAN','BACANA'];
+let NOMES=DIA,EU='';
+(async()=>{try{
+  const d=await (await fetch(API,{method:'POST',body:JSON.stringify({acao:'equipes',id:dev})})).json();
+  if(d.agentes?.length){NOMES=d.agentes.map(a=>a.nome);if(d.eu>=0)EU=NOMES[d.eu]}
+}catch{}EU||=store.get('eqNome')||''})();
+const isCmd=n=>n.toLowerCase()==='vignatti';
+
+// ---- sequência ----
+$('#go').onclick=async()=>{
+  sfx.unlock();show('intro');document.body.classList.add('film');
+  M=sfx.anthem();mus('level',0);
+  const log=$('#log');log.textContent='';
+  await sleep(1000);
+  await type(log,'> TRANSMISSÃO FINAL DO COMANDO\n');await sleep(400);
+  await type(log,'> OPERAÇÃO: VIGNATTI 16\n');await sleep(300);mus('level',1);
+  await type(log,`> AGENTES EM CAMPO: ${NOMES.length}\n`);await sleep(250);
+  await type(log,'> CAMPOS DE BATALHA: 3\n');await sleep(250);
+  await type(log,'> BAIXAS: NENHUMA (SÓ HEMATOMAS)\n');await sleep(600);
+  await type(log,'> STATUS DA MISSÃO...',20);
+  sfx.rise(1.8);await sleep(1500);mus('cut');await sleep(500);
+  done();
+};
+
+async function done(){
+  show('done');document.body.classList.remove('film');
+  ['#thanksTxt','#toCredits'].forEach(s=>$(s).classList.add('hidden'));$('#thanks').textContent='';$('#stats').replaceChildren();$('#stamp').replaceChildren();
+  sfx.impact();buzz([80,40,160]);burst();mus('back',2);
+  await sleep(500);
+  const st=document.createElement('div');st.className='stampT';st.textContent='CUMPRIDA';$('#stamp').append(st);
+  sfx.impact();buzz([60,30,120]);burst(8);
+  await sleep(1300);
+  const S=[[NOMES.length,'Agentes','#f6f4ee'],[3,'Campos','#ffc928'],[90,'Minutos de batalha','#ff5a1f'],[16,'Anos do comandante','#a9c56f']];
+  for(const [n,label,c] of S){
+    const d=document.createElement('div');d.style.setProperty('--c',c);d.innerHTML='<b>0</b><span></span>';d.querySelector('span').textContent=label;$('#stats').append(d);
+    const b=d.querySelector('b');
+    for(let i=1;i<=12;i++){b.textContent=Math.round(n*i/12);sfx.tick();await sleep(reduce?0:35)}
+    await sleep(reduce?0:200);
+  }
+  await sleep(500);
+  await scramble($('#thanks'),'OBRIGADO,\n'+(EU&&!isCmd(EU)?'AGENTE '+EU.toUpperCase():'AGENTE'));
+  await sleep(500);$('#thanksTxt').classList.replace('hidden','up');
+  await sleep(900);$('#toCredits').classList.replace('hidden','up');
+}
+
+// créditos de filme subindo
+let ending;
+$('#toCredits').onclick=()=>{
+  show('credits');document.body.classList.add('film');mus('level',1);
+  const sec=(h,...ps)=>`<section><h3>${h}</h3>${ps.join('')}</section>`;
+  const esc=s=>s.replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
+  const elenco=NOMES.filter(n=>!isCmd(n)).sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}))
+    .map(n=>`<p${n===EU?' class="me"':''}>${esc(n.toUpperCase())}</p>`);
+  $('#roll').innerHTML=
+    sec('Comando Vignatti apresenta','<p class="big">MISSÃO<br><em>VIGNATTI 16</em></p>')+
+    sec('Comandante','<p>VIGNATTI</p>')+
+    sec('Elenco',...elenco)+
+    sec('Esquadrões','<p style="color:var(--wh)">BRANCO</p><p style="color:var(--ye)">AMARELO</p>')+
+    sec('Campos de batalha','<p>A · B · C</p><small>3 sorteios, 3 batalhas de 30 minutos</small>')+
+    sec('Munição','<p>MUITA TINTA</p>')+
+    sec('Trilha sonora','<p>HINO DA VITÓRIA</p><small>tocado ao vivo no seu aparelho</small>')+
+    sec('Aviso','<p>NENHUM AGENTE FOI FERIDO NESTA MISSÃO*</p><small>*hematomas não contam</small>')+
+    sec('Agradecimento especial','<p>A VOCÊ, QUE ESTAVA LÁ</p>')+
+    sec('','<p class="big">OBRI<br><em>GADO</em></p>');
+  const roll=$('#roll');
+  roll.style.setProperty('--d',(roll.offsetHeight+innerHeight)/60+'s');re(roll,'roll');
+  roll.onanimationend=end;
+  if(reduce)$('#skip').textContent='Continuar ›';
+};
+$('#skip').onclick=()=>end();
+
+function end(){
+  if(ending)return;ending=true;
+  show('end');document.body.classList.remove('film');
+  mus('stop');M=null;sfx.fin();buzz([60,60,200]);
+}
+$('#replay').onclick=()=>{ending=false;show('start')};
+</script>
+</body>
+</html>
