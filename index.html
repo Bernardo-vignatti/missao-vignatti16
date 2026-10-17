@@ -13,7 +13,8 @@
 <meta name="theme-color" content="#15170f">
 <meta name="robots" content="noindex">
 <script>/* versão publicada: trocar aqui e em version.txt a cada atualização */
-const V='18';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+const V='19';fetch('version.txt?'+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{v=v.trim();if(v&&v!==V&&!location.search.includes('v='+v))location.replace(location.pathname+'?v='+v)}).catch(()=>{});</script>
+<script src="lock.js?v=19"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -487,7 +488,7 @@ footer button{color:var(--dim);text-decoration:underline;font-size:10px;letter-s
   </div>
 </div>
 
-<script src="config.js?v=18"></script>
+<script src="config.js?v=19"></script>
 <script>
 document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
